@@ -80,11 +80,15 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)lib\libignore\fbx_sdk\include;$(SolutionDir)DirectXTex;$(ProjectDir)lib\libignore\fbx_sdk\include;$(IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\libignore\fbx_sdk\lib;$(LibraryPath);$(ProjectDir)lib\libignore\fbx_sdk\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configration)\</OutDir>
+    <IntDir>$(SolutionDir)..\Generated\Obj\(PrijectName)\$(ProjectName)\$(Configration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)lib\libignore\fbx_sdk\include;$(SolutionDir)DirectXTex;$(IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)lib\libignore\fbx_sdk\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configration)\</OutDir>
+    <IntDir>$(SolutionDir)..\Generated\Obj\(PrijectName)\$(ProjectName)\$(Configration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,7 +124,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)scene\sceneManager;$(ProjectDir)audio;$(ProjectDir)sprite;$(ProjectDir)3dObject;$(ProjectDir)math;$(ProjectDir)input;$(ProjectDir)engine;$(ProjectDir)scene;$(ProjectDir);$(ProjectDir)imgui;$(ProjectDir)Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PostEffect;$(ProjectDir)scene\sceneManager;$(ProjectDir)audio;$(ProjectDir)sprite;$(ProjectDir)3dObject;$(ProjectDir)math;$(ProjectDir)input;$(ProjectDir)engine;$(ProjectDir)scene;$(ProjectDir);$(ProjectDir)imgui;$(ProjectDir)Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -137,7 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)scene\sceneManager;$(ProjectDir)audio;$(ProjectDir)sprite;$(ProjectDir)3dObject;$(ProjectDir)math;$(ProjectDir)input;$(ProjectDir)engine;$(ProjectDir)scene;$(ProjectDir);$(ProjectDir)imgui;$(ProjectDir)Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PostEffect;$(ProjectDir)scene\sceneManager;$(ProjectDir)audio;$(ProjectDir)sprite;$(ProjectDir)3dObject;$(ProjectDir)math;$(ProjectDir)input;$(ProjectDir)engine;$(ProjectDir)scene;$(ProjectDir);$(ProjectDir)imgui;$(ProjectDir)Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -176,6 +180,7 @@
     <ClCompile Include="math\Quaternion.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="scene\Ease.cpp" />
     <ClCompile Include="scene\sceneManager\EndScene.cpp" />
     <ClCompile Include="scene\sceneManager\GamePart1.cpp" />
@@ -247,6 +252,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\PostEffectPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\PostEffectVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Resources\shaders\RimLightPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -293,6 +310,7 @@
     <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PostEffect\PostEffect.h" />
     <ClInclude Include="scene\Ease.h" />
     <ClInclude Include="scene\sceneManager\EndScene.h" />
     <ClInclude Include="scene\sceneManager\GamePart1.h" />
@@ -315,6 +333,7 @@
     <None Include="Resources\shaders\FBX.hlsli" />
     <None Include="Resources\shaders\Obj.hlsli" />
     <None Include="Resources\shaders\Particle.hlsli" />
+    <None Include="Resources\shaders\PostEffect.hlsli" />
     <None Include="Resources\shaders\RimLight.hlsli" />
   </ItemGroup>
   <ItemGroup>

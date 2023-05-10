@@ -1,6 +1,9 @@
 #include"Sprite.h"
+#include"MathFunc.h"
 
-void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
+Camera* Sprite::camera_ = nullptr;
+
+void Sprite::InitializeTex(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 {
 
 	spritecomon = spritecommon_;
@@ -72,7 +75,7 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 	}
 
 	//並行投影行列の計算
-	constMapTransform->mat = XMMatrixIdentity();
+	constMapTransform->mat = MathFunc::Initialize();
 
 	// ヒープ設定
 	D3D12_HEAP_PROPERTIES cbHeapProp{};
@@ -88,7 +91,7 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	// 射影行列計算
-	matProjection = XMMatrixOrthographicOffCenterLH(
+	matProjection = CreateOrthographicOffCenter(
 		0.0f, (float)WinApp::window_width,
 		(float)WinApp::window_height, 0.0f,
 		0.0f, 1.0f);
@@ -109,7 +112,7 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 	assert(SUCCEEDED(result));
 
 	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(1, 0, 0, 0.5f);              // RGBAで半透明の赤
+	constMapMaterial->color = Vector4(1, 0, 0, 0.5f);              // RGBAで半透明の赤
 
 	//テクスチャサイズをイメージに合わせる
 	if (texturerIndex != UINT32_MAX) {
@@ -123,11 +126,11 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 
 void Sprite::Draw()
 {
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation));//Z軸周りに0度回転してから
-	matTrans = XMMatrixTranslation(position.x, position.y, 0.0f);//(-50,0,0)平行移動
+	matRot = MathFunc::Initialize();
+	matRot = MathFunc::Rotation({0,0,rotation},3);//Z軸周りに0度回転してから
+	matTrans = MathFunc::Move({ position.x, position.y, 0.0f });//(-50,0,0)平行移動
 
-	matWorld = XMMatrixIdentity();//変形をリセット
+	matWorld = MathFunc::Initialize();//変形をリセット
 	//matWorld *= matScale;//ワールド行列にスケーリングを反映
 	matWorld *= matRot;//ワールド行列にスケーリングを反映
 	matWorld *= matTrans;
@@ -210,7 +213,7 @@ void Sprite::Update()
 
 	/*std::copy(std::begin(vertices), std::end(vertices), vertMap);*/
 
-	/*matScale = XMMatrixScaling(scale.x, scale.y, scale.z);*/
+	/*matScale = Matrix4Scaling(scale.x, scale.y, scale.z);*/
 
 
 
@@ -222,7 +225,7 @@ void Sprite::Update()
 
 }
 
-void Sprite::SetPozition(const XMFLOAT2& position_)
+void Sprite::SetPozition(const Vector2& position_)
 {
 	position = position_;
 	Update();
@@ -234,7 +237,7 @@ void Sprite::SetRotation(float rotation_)
 	Update();
 }
 
-void Sprite::SetSize(XMFLOAT2 size)
+void Sprite::SetSize(Vector2 size)
 {
 	size_ = size;
 	Update();
@@ -264,4 +267,21 @@ void Sprite::AdjustTextureSize()
 
 	textureSize.x = static_cast<float>(resDesc.Width);
 	textureSize.y = static_cast<float>(resDesc.Height);
+}
+
+Matrix4 Sprite::CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+	float width = right - left;
+	float height = top - bottom;
+	float depth = zFar - zNear;
+	float x = (left + right) / width;
+	float y = (top + bottom) / height;
+	float z = zNear / depth;
+
+	return Matrix4(
+		2.0f / width, 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f / height, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f / depth, 0.0f,
+		-x, -y, -z, 1.0f
+	);
 }

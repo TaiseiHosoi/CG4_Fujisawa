@@ -62,7 +62,6 @@ FBXModel* FbxLoader::LoadModelFromFile(const string& modelName)
 
     // ファイルからロードしたFBXの情報をシーンにインポート
     fbxImporter->Import(fbxScene);
-
     // モデル生成
     FBXModel* fbxmodel = new FBXModel();
     fbxmodel->name = modelName;
@@ -144,7 +143,6 @@ void FbxLoader::ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh)
         FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
 
         int controlPointIndicesCount = fbxCluster->GetControlPointIndicesCount();
-
         int* controlPointIndices = fbxCluster->GetControlPointIndices();
         double* controlPointWeights = fbxCluster->GetControlPointWeights();
 
@@ -305,7 +303,6 @@ void FbxLoader::ParseMeshFaces(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 
     // 面の数
     const int polygonCount = fbxMesh->GetPolygonCount();
-
     // UVデータの数
     const int textureUVCount = fbxMesh->GetTextureUVCount();
     // UV名リスト

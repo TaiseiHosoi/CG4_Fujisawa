@@ -20,19 +20,30 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	assert(dxcomon);
 	dxCommon_ = dxcomon;
 
+	//かめら初期化
+	gameCamera_ = std::make_unique<GameCamera>(WinApp::window_width, WinApp::window_height, input_);
+	assert(gameCamera_);
+
+	//カメラのポインタをセット
+	//カメラ位置セット
+	//gameCamera_->SetTarget(hitokunFbxO_.get()->wtf.translation_);
+	gameCamera_->SetEye({ 0 , 5 , -20 });
+	gameCamera_->SetTarget({ 0 , 0 , 0 });
+	Object3d::SetCamera(gameCamera_.get());
+	FBXObject3d::SetCamera(gameCamera_.get());
+	ParticleManager::SetCamera(gameCamera_.get());
+
 	collisionManager = CollisionManager::GetInstance();
 
 	//スプライト初期化
-	spriteCommon_ = std::make_unique<SpriteCommon>();
-	spriteCommon_->Initialize(dxCommon_);
 	spriteCommon_->LoadTexture(1 , "gamen.png");
 	spriteCommon_->LoadTexture(2 , "title.png");
-
+	Sprite::SetCamera(gameCamera_.get());
 
 	sprite1 = std::make_unique<Sprite>();
-	sprite1->Initialize(spriteCommon_.get() , 1);
+	sprite1->InitializeTex(spriteCommon_ , 1);
 	sprite2 = std::make_unique<Sprite>();
-	sprite2->Initialize(spriteCommon_.get() , 2);
+	sprite2->InitializeTex(spriteCommon_ , 2);
 
 
 	sprite1->SetSize({1280 , 720});
@@ -68,18 +79,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	particleManager_ = std::make_unique<ParticleManager>();
 	particleManager_.get()->Initialize();
 
-	//かめら初期化
-	gameCamera_ = std::make_unique<GameCamera>(WinApp::window_width , WinApp::window_height , input_);
-	assert(gameCamera_);
-
-	//カメラのポインタをセット
-	//カメラ位置セット
-	//gameCamera_->SetTarget(hitokunFbxO_.get()->wtf.translation_);
-	gameCamera_->SetEye({0 , 5 , -20});
-	gameCamera_->SetTarget({0 , 0 , 0});
-	Object3d::SetCamera(gameCamera_.get());
-	FBXObject3d::SetCamera(gameCamera_.get());
-	ParticleManager::SetCamera(gameCamera_.get());
+	
 
 
 	////object3d
@@ -183,5 +183,10 @@ void GameScene::Draw()
 	Object3d::PostDraw();
 
 
+}
+
+void GameScene::SetSpriteCommon(SpriteCommon* spriteCommon)
+{
+	spriteCommon_ = spriteCommon;
 }
 

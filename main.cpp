@@ -9,6 +9,9 @@
 #include"GameScene.h"
 #include"ImGuiManager.h"
 #include"fbxsdk.h"
+#include"PostEffect.h"
+#include"Sprite.h"
+#include"SpriteCommon.h"
 
 
 
@@ -58,6 +61,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Input* input_ = Input::GetInstance();
 	input_->Initialize(winApp_);
 
+	std::unique_ptr <SpriteCommon> spriteCommon = std::make_unique<SpriteCommon>();
+	spriteCommon->Initialize(dxCommon_);
+	spriteCommon->LoadTexture(3, "title.png");
+
 	// FBX関連静的初期化
 	FbxLoader::GetInstance()->Initialize(dxCommon_->GetDevice());
 
@@ -67,10 +74,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//パーティクル静的初期化
 	ParticleManager::StaticInitialize(dxCommon_->GetDevice(), WinApp::window_width, WinApp::window_height);
 
+	
 
 	GameScene* gameScene_ = nullptr;
 	gameScene_ = new GameScene();
+	gameScene_->SetSpriteCommon(spriteCommon.get());
 	gameScene_->Initialize(dxCommon_);
+	
+
+	//ポストエフェクト
+	PostEffect::Initialize(dxCommon_);	//ポストエフェクトのスタティックメンバ変数初期化
+
 
 	ImGuiManager* imGuiManager_ = nullptr;
 	imGuiManager_ = new ImGuiManager;
@@ -93,10 +107,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		imGuiManager_->End();
 
 		//描画
+		PostEffect::PreDrawScene(dxCommon_->GetCommandList());
+		gameScene_->Draw();
+		PostEffect::PostDrawScene();
+
 		dxCommon_->PreDraw();
 
-
-		gameScene_->Draw();
+		PostEffect::Draw(dxCommon_->GetCommandList());
+		
+		
 
 		imGuiManager_->Draw();
 

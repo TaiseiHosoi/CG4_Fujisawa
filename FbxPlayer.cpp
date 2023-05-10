@@ -273,7 +273,7 @@ void FbxPlayer::Update()
 	{
 		gameObject_.get()->PlayAnimation(animCT);
 	}
-
+	
 }
 
 void FbxPlayer::Draw(ID3D12GraphicsCommandList* cmdList)

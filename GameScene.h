@@ -51,17 +51,21 @@ public:
 	/// </summary>
 	void Draw();
 
+	void SetSpriteCommon(SpriteCommon* spriteCommon );
+
 
 	int gameLevel_ = 0;
 	int levelMax_ = 8;
 	int scene = 1;
 
+public:
+	std::unique_ptr <GameCamera> gameCamera_;
+
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 
-	std::unique_ptr <GameCamera> gameCamera_;
 	std::unique_ptr <Audio> audio;
-	std::unique_ptr <SpriteCommon> spriteCommon_;
+	SpriteCommon* spriteCommon_ = nullptr;
 	//std::unique_ptr <Object3d> object3d;
 	std::unique_ptr <Mesh> model;
 	std::unique_ptr<ParticleManager> particleManager_;
