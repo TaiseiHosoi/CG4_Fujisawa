@@ -25,7 +25,7 @@ void Boss::Initialize(DirectXCommon* dxcomon)
 
 	bossObj_->SetModel(bossModel_.get());
 	bossObj_->worldTransform.translation_ = { 0,0,30 };
-	
+
 	//testobj
 	bossObj_ = Object3d::Create();
 	ico_ = Mesh::LoadFormOBJ("ico", true);

@@ -148,7 +148,7 @@ void FbxLoader::ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 		int* controlPointIndices = fbxCluster->GetControlPointIndices();
 		double* controlPointWeights = fbxCluster->GetControlPointWeights();
 
-		for (int j = 0; j < controlPointIndicesCount; j++) {
+		for (int j = 0; j < controlPointIndicesCount *3 ; j++) {
 			int vertIndex = controlPointIndices[j];
 
 			float weight = (float)controlPointWeights[j];
@@ -376,7 +376,21 @@ void FbxLoader::ParseMeshVertices(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 	{
 		/*int polNum = fbxMesh->GetPolygonSize(polIndex);
 		assert(polNum == 3);*/
-		
+		FbxVector4 v1, v2, v3, faceNorm;
+		if (smoothing == true) {
+			
+			fbxMesh->GetPolygonVertexNormal(polIndex, 0, v1);
+			fbxMesh->GetPolygonVertexNormal(polIndex, 1, v2);
+			fbxMesh->GetPolygonVertexNormal(polIndex, 2, v3);
+
+			faceNorm = {
+				(v2.mData[1] - v1.mData[1]) * (v3.mData[2] - v1.mData[2]) - (v2.mData[2] - v1.mData[2]) * (v3.mData[1] - v1.mData[1]),
+				(v2.mData[2] - v1.mData[2]) * (v3.mData[0] - v1.mData[0]) - (v2.mData[0] - v1.mData[0]) * (v3.mData[2] - v1.mData[2]),
+				(v2.mData[0] - v1.mData[0]) * (v3.mData[1] - v1.mData[1]) - (v2.mData[1] - v1.mData[1]) * (v3.mData[0] - v1.mData[0]),
+				0
+			};
+		}
+
 
 		for (int polVertexIndex = 0; polVertexIndex < 3; polVertexIndex++) // 頂点毎のループ
 		{
@@ -389,7 +403,17 @@ void FbxLoader::ParseMeshVertices(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 			// 法線座標
 			FbxVector4 normalVec4;
 			fbxMesh->GetPolygonVertexNormal(polIndex, polVertexIndex, normalVec4);
+			if (smoothing == true) {
+				normalVec4 += faceNorm;
+				float len = normalVec4.Length();
 
+				if (len != 0.0f) {
+					normalVec4 /= len;
+				}
+
+			}
+			
+			
 			// UV座標
 			FbxVector2 uvVec2;
 			bool isUnMapped;
@@ -405,10 +429,13 @@ void FbxLoader::ParseMeshVertices(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 				newVertexInfo.push_back(vertexInfo[0]);
 				newVertexInfo.push_back(vertexInfo[1]);
 				newVertexInfo.push_back(vertexInfo[2]);
-				// 法線座標
+				
+
 				newVertexInfo.push_back(normalVec4[0]);
 				newVertexInfo.push_back(normalVec4[1]);
 				newVertexInfo.push_back(normalVec4[2]);
+
+				
 				// UV座標
 				newVertexInfo.push_back(uvVec2[0]);
 				newVertexInfo.push_back(uvVec2[1]);
@@ -442,7 +469,7 @@ void FbxLoader::ParseMeshVertices(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 			{
 				vertexInfo[6], 1.0f - vertexInfo[7] 
 			}
-			});
+		});
 	}
 
 	
@@ -486,20 +513,7 @@ void FbxLoader::ParseMeshFaces(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 				vertex.normal.y = (float)normal[1];
 				vertex.normal.z = (float)normal[2];
 			}
-			if (smoothing == true)
-			{
-				//全頂点の法線を平均する
-				XMVECTOR normal = {};
-
-				normal += XMVectorSet(vertex.normal.x, vertex.normal.y, vertex.normal.z, 0);
-
-				normal = XMVector3Normalize(normal / 3);
-				//共通法線を使用する全ての頂点データに書き込む
-
-				vertex.normal = { normal.m128_f32[0],normal.m128_f32[1],normal.m128_f32[2] };
-
-
-			}
+			
 
 			// テクスチャUV読込
 			if (textureUVCount > 0) {
