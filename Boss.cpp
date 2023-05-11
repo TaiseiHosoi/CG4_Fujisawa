@@ -10,12 +10,13 @@ void Boss::Initialize(DirectXCommon* dxcomon)
 	FBXObject3d::CreateGraphicsPipeline();
 
 	//ボスのFBX読み込み
-	bossFbxM_.reset(FbxLoader::GetInstance()->LoadModelFromFile("Boss"));
+	bossFbxM_.reset(FbxLoader::GetInstance()->LoadModelFromFile("sphere", true));
 	bossFbxO_ = std::make_unique<FBXObject3d>();
 	bossFbxO_->Initialize();
 	bossFbxO_->SetModel(bossFbxM_.get());
 	bossFbxO_->PlayAnimation(0);
 	bossFbxO_->SetPosition({ 0,0,30 });
+	bossFbxO_->SetScale({2,2,2});
 	bossFbxO_->SetIsBonesWorldMatCalc(true);	//ボーンワールド行列計算あり
 	bossFbxO_->Update();
 

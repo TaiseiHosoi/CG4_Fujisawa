@@ -5,6 +5,8 @@
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <string>
+#include <array>
+#include <unordered_map>
 
 
 class FbxLoader
@@ -42,7 +44,7 @@ public:
 	/// ファイルからFBXモデル読込
 	/// </summary>
 	/// <param name="modelName">モデル名</param>
-	FBXModel* LoadModelFromFile(const string& modelName);
+	FBXModel* LoadModelFromFile(const string& modelName, bool isSmooth);
 
 	/// <summary>
 	/// FBXの行列XMMatrixに変換
@@ -53,6 +55,13 @@ public:
 
 	//スキニング情報の読み取り
 	void ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh);
+
+	//同一頂点の法線座標かUVが重なる際の関数(新しく頂点インデックス作成)
+	static bool IsExistNormalUVInfo(const std::vector<float>& vertexInfo);
+	static std::vector<float> CreateVertexInfo(const std::vector<float>& vertex, const FbxVector4& normalVec4, const FbxVector2& uvVec2);
+	static int CreateNewVertexIndex(const std::vector<float>& vertexInfo, const FbxVector4& normalVec4, const FbxVector2& uvVec2,
+		std::vector<std::vector<float>>& vertexInfoList, int oldIndex, std::vector<std::array<int, 2>>& oldNewIndexPairList);
+	static bool IsSetNormalUV(const std::vector<float> vertexInfo, const FbxVector4& normalVec4, const FbxVector2& uvVec2);
 
 
 private:
@@ -99,7 +108,9 @@ private:
 	// ディレクトリを含んだファイルパスからファイル名を抽出する
 	std::string ExtractFileName(const std::string& path);
 
-
+	//頂点法線スムージング用データ
+	std::unordered_map<unsigned short, std::vector<unsigned short>> smoothDate;
+	bool smoothing = false;
 
 
 };

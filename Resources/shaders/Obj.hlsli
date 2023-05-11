@@ -14,6 +14,7 @@ cbuffer cbuff1 : register(b1)
 struct VSOutput
 {
 	float4 svpos : SV_POSITION;	//システム用頂点座標
+	float3 worldPos : POS;
 	float3 normal : NORMAL;		//法線ベクトル
 	float2 uv : VEXCOORD;		//uv値
 };

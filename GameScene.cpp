@@ -68,7 +68,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	FBXObject3d::SetDevice(dxCommon_->GetDevice());
 	// グラフィックスパイプライン生成
 	FBXObject3d::CreateGraphicsPipeline();
-	hitokunFbxM_.reset(FbxLoader::GetInstance()->LoadModelFromFile("lowpoliInukun"));
+	hitokunFbxM_.reset(FbxLoader::GetInstance()->LoadModelFromFile("lowpoliInukun",true));
 	hitokunFbxO_ = std::make_unique<FBXObject3d>();
 	hitokunFbxO_->Initialize();
 	hitokunFbxO_->SetModel(hitokunFbxM_.get());
