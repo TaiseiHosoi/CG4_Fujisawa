@@ -148,7 +148,7 @@ void FbxLoader::ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 		int* controlPointIndices = fbxCluster->GetControlPointIndices();
 		double* controlPointWeights = fbxCluster->GetControlPointWeights();
 
-		for (int j = 0; j < controlPointIndicesCount *3 ; j++) {
+		for (int j = 0; j < controlPointIndicesCount; j++) {
 			int vertIndex = controlPointIndices[j];
 
 			float weight = (float)controlPointWeights[j];
