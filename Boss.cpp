@@ -15,8 +15,8 @@ void Boss::Initialize(DirectXCommon* dxcomon)
 	bossFbxO_->Initialize();
 	bossFbxO_->SetModel(bossFbxM_.get());
 	bossFbxO_->PlayAnimation(0);
-	bossFbxO_->SetPosition({ 0,0,30 });
-	bossFbxO_->SetScale({2,2,2});
+	bossFbxO_->SetPosition({ 0,15,30 });
+	bossFbxO_->SetScale({5,5,5});
 	bossFbxO_->SetIsBonesWorldMatCalc(true);	//ボーンワールド行列計算あり
 	bossFbxO_->Update();
 
@@ -55,83 +55,83 @@ void Boss::Initialize(DirectXCommon* dxcomon)
 void Boss::Update()
 {
 
-	srand(time(nullptr));
-	//デスフラグが立った球を削除
-	bullets_.remove_if([](std::unique_ptr<BossBullet>& bullet) { return bullet->isDead(); });
+	//srand(time(nullptr));
+	////デスフラグが立った球を削除
+	//bullets_.remove_if([](std::unique_ptr<BossBullet>& bullet) { return bullet->isDead(); });
 
-	for (std::unique_ptr<BossBullet>& bullet : bullets_)
-	{
-		bullet->Update();
-	}
-
-
-	if (mode > 1)
-	{
-		mode = 0;
-	}
+	//for (std::unique_ptr<BossBullet>& bullet : bullets_)
+	//{
+	//	bullet->Update();
+	//}
 
 
-	switch (mode)
-	{
-	case BattleMode::Run:
-		RunAway();
-		if (input_->TriggerKey(DIK_RETURN))
-		{
-			mode++;
-			Reset();
-		}
-		break;
-
-	case BattleMode::Ground:
-
-		if (isAttack == false)
-		{
-			attackValue = AttackValue::nasi;
-			attackTimer--;
-		}
-		if (attackTimer <= 0)
-		{
-			isAttack = true;
-			attackValue = rand() % 2 + 1;
-			/*attackValue = AttackValue::TACKLE;
-			attackValue = AttackValue::FIRE;*/
-			attackTimer = 240.0f;
-		}
+	//if (mode > 1)
+	//{
+	//	mode = 0;
+	//}
 
 
-		if (attackValue == AttackValue::FIRE)
-		{
-			if (isFire == false)
-			{
-				isFire = true;
-			}
-			Shot();
+	//switch (mode)
+	//{
+	//case BattleMode::Run:
+	//	RunAway();
+	//	if (input_->TriggerKey(DIK_RETURN))
+	//	{
+	//		mode++;
+	//		Reset();
+	//	}
+	//	break;
 
-		}
+	//case BattleMode::Ground:
 
-		else if (attackValue == AttackValue::TACKLE)
-		{
-			Tackle();
-		}
+	//	if (isAttack == false)
+	//	{
+	//		attackValue = AttackValue::nasi;
+	//		attackTimer--;
+	//	}
+	//	if (attackTimer <= 0)
+	//	{
+	//		isAttack = true;
+	//		attackValue = rand() % 2 + 1;
+	//		/*attackValue = AttackValue::TACKLE;
+	//		attackValue = AttackValue::FIRE;*/
+	//		attackTimer = 240.0f;
+	//	}
 
-		if (input_->TriggerKey(DIK_RETURN))
-		{
-			mode++;
-			Reset();
-		}
-		if (input_->TriggerKey(DIK_0))
-		{
-			if (isFire == false)
-			{
-				isFire = true;
-			}
-			else
-			{
-				isFire = false;
-			}
-		}
-		break;
-	}
+
+	//	if (attackValue == AttackValue::FIRE)
+	//	{
+	//		if (isFire == false)
+	//		{
+	//			isFire = true;
+	//		}
+	//		Shot();
+
+	//	}
+
+	//	else if (attackValue == AttackValue::TACKLE)
+	//	{
+	//		Tackle();
+	//	}
+
+	//	if (input_->TriggerKey(DIK_RETURN))
+	//	{
+	//		mode++;
+	//		Reset();
+	//	}
+	//	if (input_->TriggerKey(DIK_0))
+	//	{
+	//		if (isFire == false)
+	//		{
+	//			isFire = true;
+	//		}
+	//		else
+	//		{
+	//			isFire = false;
+	//		}
+	//	}
+	//	break;
+	//}
 	/*Tackle();
 
 	Move();*/

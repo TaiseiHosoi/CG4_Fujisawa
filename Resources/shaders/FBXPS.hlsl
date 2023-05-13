@@ -52,7 +52,7 @@ PSOutput main(VSOutput input)
 
     //リムライト
     float rim = 1.0 - saturate(dot(eyeDir, normal));
-    rim = smoothstep(0.7, 1.0, rim);
+    rim = smoothstep(0.6, 1.0, rim);
 
     float4 abs = ambient + diffuse + specular;
     float4 col = lerp(abs, limColor/*_RimColor*/, rim); //カラーが混ざらないようにラープでリムのカラー除外
