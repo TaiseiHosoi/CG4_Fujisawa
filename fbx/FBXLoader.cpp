@@ -160,22 +160,22 @@ void FbxLoader::ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 
 			for (int j = 0; j < controlPointIndicesCount; j++) {
 				//
-				auto vertexids = meshVerticeControlpoints[fbxCluster->GetControlPointIndices()[j]];
+				//auto vertexids = meshVerticeControlpoints[fbxCluster->GetControlPointIndices()[j]];
 
-				//for (auto& vertexid : vertexids) {
-					if (vertices[j].boneIndex == 0) { *vertices[j].boneIndex = jointIndex; }
-					if (vertices[j].boneWeight == 0) { *vertices[j].boneWeight = fbxCluster->GetControlPointWeights()[j]; }
+				/*for (auto& vertexid : vertexids) {
+					if (vertices[vertexid].boneIndex == 0) { *vertices[vertexid].boneIndex = jointIndex; }
+					if (vertices[vertexid].boneWeight == 0) { *vertices[vertexid].boneWeight = fbxCluster->GetControlPointWeights()[j]; }
 
-				//}
+				}*/
 				//
 
 
-				/*int vertIndex = controlPointIndices[j];
+				int vertIndex = controlPointIndices[j];
 
 				float weight = (float)controlPointWeights[j];
 
 
-				weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i,weight });*/
+				weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i,weight });
 
 
 			}
@@ -183,39 +183,39 @@ void FbxLoader::ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 
 
 
-		//for (int i = 0; i < vertices.size(); i++) {
+		for (int i = 0; i < vertices.size(); i++) {
 
-		//	auto& weightList = weightLists[i];
+			auto& weightList = weightLists[i];
 
-		//	weightList.sort([](auto const& lhs, auto const& rhs) {
+			weightList.sort([](auto const& lhs, auto const& rhs) {
 
-		//		return lhs.weight > rhs.weight;
-		//		});
+				return lhs.weight > rhs.weight;
+				});
 
-		//	int weightArrayIndex = 0;
+			int weightArrayIndex = 0;
 
-		//	for (auto& weightSet : weightList) {
+			for (auto& weightSet : weightList) {
 
-		//		vertices[i].boneIndex[weightArrayIndex] = weightSet.index;
-		//		vertices[i].boneWeight[weightArrayIndex] = weightSet.weight;
+				vertices[i].boneIndex[weightArrayIndex] = weightSet.index;
+				vertices[i].boneWeight[weightArrayIndex] = weightSet.weight;
 
-		//		if (++weightArrayIndex >= FBXModel::MAX_BONE_INDICES) {
-		//			float weight = 0.0f;
+				if (++weightArrayIndex >= FBXModel::MAX_BONE_INDICES) {
+					float weight = 0.0f;
 
-		//			for (int j = 1; j < FBXModel::MAX_BONE_INDICES; j++) {
-		//				weight += vertices[i].boneWeight[j];
-		//			}
-		//			vertices[i].boneWeight[0] = 1.0f - weight;
-		//			break;
-		//		}
+					for (int j = 1; j < FBXModel::MAX_BONE_INDICES; j++) {
+						weight += vertices[i].boneWeight[j];
+					}
+					vertices[i].boneWeight[0] = 1.0f - weight;
+					break;
+				}
 
-		//	}
+			}
 
-		//}
+		}
 	}
 	int aaa = fbxMesh->GetPolygonCount();
 	int z = 0;
-	if (z == 0) {};
+	if (z == 0) {}
 
 }
 
