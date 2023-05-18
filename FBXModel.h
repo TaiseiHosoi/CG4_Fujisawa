@@ -80,6 +80,7 @@ public: // サブクラス
 		DirectX::XMFLOAT2 uv;  // uv座標
 		UINT boneIndex[MAX_BONE_INDICES];//ボーン 番号
 		float boneWeight[MAX_BONE_INDICES];//ボーン 重み
+		std::vector<std::pair<UINT, float>> boneData;
 	};
 
 public:

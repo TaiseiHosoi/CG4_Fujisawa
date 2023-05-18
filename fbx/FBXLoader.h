@@ -66,6 +66,12 @@ public:
 
 	std::vector<std::vector<int>> meshVertice;
 	std::unordered_map<int, std::vector<int>> meshVerticeControlpoints;
+
+	template<typename T>
+	T Min(T a, T b) {
+		return (a < b) ? a : b;
+	}
+
 	
 private:
 	// D3D12デバイス
