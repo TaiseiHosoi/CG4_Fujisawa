@@ -142,84 +142,84 @@ void FbxLoader::ParseSkin(FBXModel* fbxmodel, FbxMesh* fbxMesh)
 	auto& vertices = fbxmodel->vertices;
 	
 
-	int polygonCount = fbxMesh->GetPolygonCount();
-	int mi = 0;
-	for (unsigned int deformerIndex = 0; deformerIndex < fbxMesh->GetDeformerCount(); ++deformerIndex)
-	{
-		for (int i = 0; i < clusterCount; i++) {
+	//int polygonCount = fbxMesh->GetPolygonCount();
+	//int mi = 0;
+	//for (unsigned int deformerIndex = 0; deformerIndex < fbxMesh->GetDeformerCount(); ++deformerIndex)
+	//{
+	//	for (int i = 0; i < clusterCount; i++) {
 
-			FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
-			std::string jointname = fbxCluster->GetLink()->GetName();
-			UINT jointIndex = FindJointIndex(jointname);
-			int controlPointIndicesCount = fbxCluster->GetControlPointIndicesCount();
-			int controlPointCount = fbxMesh->GetControlPointsCount();
+	//		FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
+	//		std::string jointname = fbxCluster->GetLink()->GetName();
+	//		UINT jointIndex = FindJointIndex(jointname);
+	//		int controlPointIndicesCount = fbxCluster->GetControlPointIndicesCount();
+	//		int controlPointCount = fbxMesh->GetControlPointsCount();
 
-			int* controlPointIndices = fbxCluster->GetControlPointIndices();
-			double* controlPointWeights = fbxCluster->GetControlPointWeights();
-
-
-
-			for (int j = 0; j < controlPointIndicesCount; j++) {
-				//
-				auto vertexids = meshVerticeControlpoints[fbxCluster->GetControlPointIndices()[j]];
-
-				for (auto& vertexid : vertexids) {
-					if (vertices[vertexid].boneIndex == 0) { *vertices[vertexid].boneIndex = jointIndex; }
-					if (vertices[vertexid].boneWeight == 0) { *vertices[vertexid].boneWeight = fbxCluster->GetControlPointWeights()[j]; }
-
-				}
-				//
+	//		int* controlPointIndices = fbxCluster->GetControlPointIndices();
+	//		double* controlPointWeights = fbxCluster->GetControlPointWeights();
 
 
-				
-				
-					float weight = (float)controlPointWeights[j];
-					int vertIndex = controlPointIndices[j];
 
-					auto point = fbxMesh->GetControlPointAt(j);
-					weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i,weight });
-					
-				
+	//		for (int j = 0; j < controlPointIndicesCount; j++) {
+	//			//
+	//			auto vertexids = meshVerticeControlpoints[fbxCluster->GetControlPointIndices()[j]];
+
+	//			for (auto& vertexid : vertexids) {
+	//				if (vertices[vertexid].boneIndex == 0) { *vertices[vertexid].boneIndex = jointIndex; }
+	//				if (vertices[vertexid].boneWeight == 0) { *vertices[vertexid].boneWeight = fbxCluster->GetControlPointWeights()[j]; }
+
+	//			}
+	//			//
 
 
-			}
-		}
+	//			
+	//			
+	//				float weight = (float)controlPointWeights[j];
+	//				int vertIndex = controlPointIndices[j];
 
-		
+	//				auto point = fbxMesh->GetControlPointAt(j);
+	//				weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i,weight });
+	//				
+	//			
 
-		for (int i = 0; i < vertices.size(); i++) {
 
-			auto& weightList = weightLists[i];
+	//		}
+	//	}
 
-			weightList.sort([](auto const& lhs, auto const& rhs) {
+	//	
 
-				return lhs.weight > rhs.weight;
-				});
+	//	for (int i = 0; i < vertices.size(); i++) {
 
-			int weightArrayIndex = 0;
+	//		auto& weightList = weightLists[i];
 
-			for (auto& weightSet : weightList) {
+	//		weightList.sort([](auto const& lhs, auto const& rhs) {
 
-				vertices[i].boneIndex[weightArrayIndex] = weightSet.index;
-				vertices[i].boneWeight[weightArrayIndex] = weightSet.weight;
+	//			return lhs.weight > rhs.weight;
+	//			});
 
-				if (++weightArrayIndex >= FBXModel::MAX_BONE_INDICES) {
-					float weight = 0.0f;
+	//		int weightArrayIndex = 0;
 
-					for (int j = 1; j < FBXModel::MAX_BONE_INDICES; j++) {
-						weight += vertices[i].boneWeight[j];
-					}
-					vertices[i].boneWeight[0] = 1.0f - weight;
-					break;
-				}
+	//		for (auto& weightSet : weightList) {
 
-			}
-			mi++;
-		}
-		
-	}
+	//			vertices[i].boneIndex[weightArrayIndex] = weightSet.index;
+	//			vertices[i].boneWeight[weightArrayIndex] = weightSet.weight;
 
-	SetBoneDataToVertices(fbxMesh, vertices);
+	//			if (++weightArrayIndex >= FBXModel::MAX_BONE_INDICES) {
+	//				float weight = 0.0f;
+
+	//				for (int j = 1; j < FBXModel::MAX_BONE_INDICES; j++) {
+	//					weight += vertices[i].boneWeight[j];
+	//				}
+	//				vertices[i].boneWeight[0] = 1.0f - weight;
+	//				break;
+	//			}
+
+	//		}
+	//		mi++;
+	//	}
+	//	
+	//}
+
+	SetBoneDataToVertices(fbxMesh,fbxmodel,vertices);
 	
 
 }
@@ -735,7 +735,7 @@ void FbxLoader::ParseMaterial(FBXModel* fbxmodel, FbxNode* fbxNode)
 	}
 }
 
-void FbxLoader::SetBoneDataToVertices(FbxMesh* pMesh, std::vector<FBXModel::VertexPosNormalUv>& vertices)
+void FbxLoader::SetBoneDataToVertices(FbxMesh* pMesh, FBXModel* pModel, std::vector<FBXModel::VertexPosNormalUv>& vertices)
 {
 	int skinCount = pMesh->GetDeformerCount(FbxDeformer::eSkin);
 
@@ -748,29 +748,28 @@ void FbxLoader::SetBoneDataToVertices(FbxMesh* pMesh, std::vector<FBXModel::Vert
 		{
 			FbxCluster* cluster = skin->GetCluster(j);
 			
-			int jointIndex = FindJointIndexByName(cluster->GetLink()->GetName(),skin);
+			int jointIndex = FindJointIndexByName(cluster->GetLink()->GetName(),pModel);
 
-			for (UINT k = 0; k < cluster->GetControlPointIndicesCount(); ++k)
+			for (int k = 0; k < cluster->GetControlPointIndicesCount(); ++k)
 			{
-				UINT controlPointIndex = cluster->GetControlPointIndices()[k];
+				int controlPointIndex = cluster->GetControlPointIndices()[k];
 				float weight = cluster->GetControlPointWeights()[k];
 
-				for (UINT l = 0; l < pMesh->GetPolygonCount(); ++l)
+				for (int l = 0; l < pMesh->GetPolygonCount(); ++l)
 				{
-					for (UINT m = 0; m < 3; ++m)
+					for (int m = 0; m < 3; ++m)
 					{
-						UINT vertexIndexInArray = l * 3 + m;
+						int vertexIndexInArray = l * 3 + m;
 
 						if (pMesh->GetPolygonVertex(l, m) == controlPointIndex)
 						{
 							for (UINT n = 0; n < 4; ++n)
 							{
-								if (vertices[vertexIndexInArray].boneWeight[n] == 0.0f)
-								{
+								
 									vertices[vertexIndexInArray].boneIndex[n] = jointIndex;
 									vertices[vertexIndexInArray].boneWeight[n] = weight;
 									break;
-								}
+								
 							}
 						}
 					}
@@ -781,11 +780,12 @@ void FbxLoader::SetBoneDataToVertices(FbxMesh* pMesh, std::vector<FBXModel::Vert
 	
 }
 
-int FbxLoader::FindJointIndexByName(const std::string& name, FbxSkin* skin)
+int FbxLoader::FindJointIndexByName(const std::string& name, FBXModel* model)
 {
-	for (int i = 0; i < skin->GetClusterCount(); ++i)
+
+	for (int i = 0; i < model->GetBones().size(); ++i)
 	{
-		if (skin[i].GetName() == name)
+		if (model->GetBones()[i].name == name)
 		{
 			return i;
 		}

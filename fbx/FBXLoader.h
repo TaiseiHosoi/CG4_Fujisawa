@@ -106,9 +106,9 @@ private:
 	// マテリアル読み取り
 	void ParseMaterial(FBXModel* fbxmodel, FbxNode* fbxNode);
 	// ボーンデータのVSBufferへの格納
-	void SetBoneDataToVertices(FbxMesh* pMesh, std::vector<FBXModel::VertexPosNormalUv>& vertices);
+	void SetBoneDataToVertices(FbxMesh* pMesh, FBXModel* pModel, std::vector<FBXModel::VertexPosNormalUv>& vertices);
 	//
-	int FindJointIndexByName(const std::string& name, FbxSkin* skin);
+	int FindJointIndexByName(const std::string& name, FBXModel* model);
 	// テクスチャ読み込み
 	void LoadTexture(FBXModel* fbxmodel, const std::string& fullpath);
 
