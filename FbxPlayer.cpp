@@ -21,6 +21,7 @@ void FbxPlayer::Initialize(FBXModel* fbxModel)
 	gameObject_ = FBXObject3d::Create();
 	gameObject_->SetModel(fbxModel);
 	gameObject_->SetIsBonesWorldMatCalc(true);	//ボーンワールド行列計算あり
+	gameObject_->SetScale({ 5,5,5 });
 	gameObject_->Update();
 
 
@@ -273,7 +274,7 @@ void FbxPlayer::Update()
 	{
 		gameObject_.get()->PlayAnimation(animCT);
 	}
-
+	
 }
 
 void FbxPlayer::Draw(ID3D12GraphicsCommandList* cmdList)

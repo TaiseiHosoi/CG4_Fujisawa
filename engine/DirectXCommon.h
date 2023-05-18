@@ -30,6 +30,8 @@ public:
 
 	ID3D12Device* GetDevice() const { return device_.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
+	ID3D12DescriptorHeap* GetDsvHeap() const { return dsvHeap_.Get(); }
+	ID3D12Resource* GetDepthBuffers() const { return depthBuff_.Get(); }
 	//バックバッハの数をw取得
 	size_t GetBackBufferCount() const { return backBuffers.size(); }
 private:

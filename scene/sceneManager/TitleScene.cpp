@@ -11,9 +11,9 @@ TitleScene::~TitleScene() {
 
 void TitleScene::Initialize(DirectXCommon* dxCommon, GameCamera* camera) {
 	sprite1 = std::make_unique<Sprite>();
-	sprite1->Initialize(_controller->spriteCommon_.get(), 1);
+	sprite1->InitializeTex(_controller->spriteCommon_.get(), 1);
 	sprite2 = std::make_unique<Sprite>();
-	sprite2->Initialize(_controller->spriteCommon_.get(), 2);
+	sprite2->InitializeTex(_controller->spriteCommon_.get(), 2);
 
 
 	sprite1->SetSize({ 1280,720 });
